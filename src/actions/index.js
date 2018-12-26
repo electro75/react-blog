@@ -5,8 +5,11 @@ import _ from 'lodash';
 export const fetchPostsAndUsers = () => async (dispatch, getState) => {
     await dispatch(fetchPosts());
 
-    const userIds = _.uniq(_.map(getState().posts, 'userId'));      //uses _.map to pull off the key, _.uniq to delete the duplicate values.
-    userIds.forEach(id => dispatch(fetchUser(id)));
+    _.chain(getState().posts)                           // _.chain allows you to execute nultiple methods on a collection
+        .map('userId')                                  // .map extracts values with the key 'userId'
+        .uniq()                                         // .uniq deletes duplicate data from the userId array                
+        .forEach(id => dispatch(fetchUser(id)))         // forEach is used to dispatch the fetchUser() action
+        .value()                                        // value() is used to tell lodash to execute the chain. CHAIN IS NOT EXECUTED WITHOUT THE VALUE().
 }
 
 export const fetchPosts = () => 
